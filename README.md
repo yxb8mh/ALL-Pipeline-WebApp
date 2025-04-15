@@ -19,6 +19,20 @@ Here is a working live demo : https://dscareers-ethancao.pythonanywhere.com
 - API: Job-board specific guest API, openstreetmap.org API
 
 ## Update Log:
+**03/05**
+- Optimize webscraping scripts to fully utilize the given guest-api
+- Extract as much valuable components from the api as possible
+- automate the data pre-processing stage, and export as a csv file
+  
+**03/19**
+- Establish the basic architecture of the website landing page via HTML + CSS
+- Write sample article title pages to simulate that of a real website
+  
+**04/02**
+- Establish a basic HTML + CSS structure of the visualization pages, create new endpoints for users to access
+- Design the interactive components (via JavaScript) on the visual map that connects to the csv data tables scraped from webscraper
+- Create a script that auto-encodes location names from the dataset into geo LAT LONG coordinates
+  
 **04/16**
 - Automate the web-scrape task and connect it with MongoDB via Shell 
 - initialize the pipeline and create a fastapi end point up running in the cloud (so that the website can always access it)
