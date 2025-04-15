@@ -20,6 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get('/')
+def root():
+    return {"mysterious man": "Welcome to the Job Data API landing page! Type '/api/jobs' to get the latest scraped job data!"}
+
 @app.get('/api/jobs')
 def get_jobs():
     jobs = list(collection.find({},{"_id": 0}))
