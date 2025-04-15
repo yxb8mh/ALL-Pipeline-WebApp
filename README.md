@@ -9,7 +9,7 @@
 
 
 ## Demo
-Here is a working live demo : dscareers-ethancao.pythonanywhere.com
+Here is a working live demo : https://dscareers-ethancao.pythonanywhere.com
 
 ## Built with 
 
@@ -22,4 +22,3 @@ Here is a working live demo : dscareers-ethancao.pythonanywhere.com
 - Connect to Front-end (HTML & JavaScript architecture) via Render's cloud hosted FastAPI
 - Establishment of analytical visualizations via D3
 - Testing of scheduled task and whether website updates in real time
-
