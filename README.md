@@ -9,7 +9,7 @@
 
 
 ## Demo
-Here is a working live demo : [ https://iharsh234.github.io/WebApp/](https://dscareers-ethancao.pythonanywhere.com/)
+Here is a working live demo : dscareers-ethancao.pythonanywhere.com
 
 ## Built with 
 
