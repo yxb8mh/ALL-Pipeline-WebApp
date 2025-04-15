@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UVA Job Map – Applicants Colored</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container {
+      display: flex;
+      height: 100%;
+    }
+
+    #chat-iframe {
+      width: 500px;
+      height: 100%;
+      border: none;
+      border-radius: 28px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      margin: 0;
+    }
+
+
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
+    .custom-marker {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      line-height: 34px;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+
+    .custom-marker:hover {
+      transform: translateY(-10px) scale(1.15);
+      cursor: pointer;
+    }
+
+    .marker-low-a { background: #4A90E2; }
+    .marker-low-b { background: #2C82C9; }
+    .marker-medium-a { background: #F39C12; }
+    .marker-medium-b { background: #D68910; }
+    .marker-high-a { background: #27AE60; }
+    .marker-high-b { background: #1E8449; }
+    .marker-unknown { background: #7f8c8d; }
+
+    #map-legend {
+      position: absolute;
+      bottom: 150px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 1001; /* This ensures it appears above the map */
+      font-family: sans-serif;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .legend-circle {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .legend-circle.low     { background: #4A90E2; }
+    .legend-circle.medium  { background: #F39C12; }
+    .legend-circle.high    { background: #27AE60; }
+    .legend-circle.unknown { background: #7f8c8d; }
+
+  </style>
+</head>
+<body>
+
+  <div id="map-legend">
+    <h4>Average Applicants</h4>
+    <div class="legend-item"><span class="legend-circle low"></span> Low (1–60)</div>
+    <div class="legend-item"><span class="legend-circle medium"></span> Medium (61-100)</div>
+    <div class="legend-item"><span class="legend-circle high"></span> High (101+)</div>
+    <div class="legend-item"><span class="legend-circle unknown"></span> Unknown</div>
+  </div>
+
+
+  <div class="container">
+    <div id="map"></div>
+    <iframe
+      id="chat-iframe"
+      src="https://junewayne-cavhire-chatbotcopilot-us-pucmcr.streamlit.app/?embed=true">
+    </iframe>
+  </div>
+
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([38.0356, -78.5034], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let jobData = {};
+    let locationMeta = {};
+    let markers = [];
+
+    fetch('/static/Cleaned_Parsed_Data_Science_Internships.json')
+      .then(res => res.json())
+      .then(data => {
+        jobData = data.reduce((acc, job) => {
+          const loc = job.location || 'Unknown';
+          if (!acc[loc]) acc[loc] = [];
+          acc[loc].push(job);
+          return acc;
+        }, {});
+        return fetch('/static/location_job_applicants_summary_US.json');
+      })
+      .then(res => res.json())
+      .then(summary => {
+        summary.forEach(entry => {
+          locationMeta[entry.location] = {
+            jobCount: entry.number_of_jobs,
+            avgApplicants: entry.average_applicants
+          };
+        });
+        return fetch('/static/locations_US.json');
+      })
+      .then(res => res.json())
+      .then(locations => {
+        let index = 0;
+        Object.entries(locations).forEach(([name, coords]) => {
+          const meta = locationMeta[name] || {};
+          const jobCount = meta.jobCount || 0;
+          const avgApplicants = meta.avgApplicants || 0;
+
+          let baseLevel = 'low';
+          if (avgApplicants >= 50) baseLevel = 'high';
+          else if (avgApplicants >= 20) baseLevel = 'medium';
+          else if (avgApplicants > 0) baseLevel = 'low';
+          else baseLevel = 'unknown';
+
+          const variation = index % 2 === 0 ? 'a' : 'b';
+          const className = baseLevel === 'unknown' ? 'marker-unknown' : `marker-${baseLevel}-${variation}`;
+          index++;
+
+          const icon = L.divIcon({
+            className: '',
+            html: `<div class="custom-marker ${className}" title="${name}: ${jobCount} job${jobCount !== 1 ? 's' : ''}">${jobCount}</div>`,
+            iconSize: [34, 34],
+            iconAnchor: [17, 34]
+          });
+
+          const marker = L.marker([coords.lat, coords.lng], { icon });
+          const jobs = jobData[name] || [];
+
+          let popupHTML = `
+            <div class="popup-content">
+              <b>${name}</b><br>
+              ${jobCount} job${jobCount !== 1 ? 's' : ''}<br>
+              Avg applicants: ${Math.round(avgApplicants)}<br><hr>
+              <div style="max-height: 300px; overflow-y: auto; padding-right: 6px;">
+          `;
+
+          jobs.forEach(job => {
+            popupHTML += `
+              <div style="text-align:left; margin-bottom: 10px;">
+                <strong style="font-size:25px;">${job.job_title || 'Untitled Job'}</strong><br>
+                <div style="font-size:18px;">
+                  <strong>Company:</strong> ${job.company_name || 'N/A'}<br>
+                  <strong>Time Posted:</strong> ${job.time_posted || 'N/A'}<br>
+                  <strong>Applicants:</strong> ${job.num_applicants || 'N/A'}<br>
+                  <strong>Employment Type:</strong> ${job['Employment Type'] || 'N/A'}<br>
+                  <strong>Seniority Level:</strong> ${job['Seniority Level'] || 'N/A'}<br>
+                  <strong>Job Function:</strong> ${job['Job Function'] || 'N/A'}<br>
+                  <strong>Industries:</strong> ${job['Industries'] || 'N/A'}<br>
+                  <strong>Skills Desired:</strong> ${job['skills_desired'] || 'N/A'}<br>
+                  <strong>Degree Qualifications:</strong> ${job['degree_qualifications'] || 'N/A'}<br>
+                </div>
+                <p style="font-size:20px;"><strong>Responsibilities:</strong><br>${job.job_responsibilities || 'N/A'}</p>
+              </div><hr>
+            `;
+          });
+
+          popupHTML += '</div></div>';
+
+          marker.bindPopup(popupHTML);
+          marker.addTo(map);
+          markers.push(marker);
+        });
+      })
+      .catch(error => console.error('Error loading map data:', error));
+  </script>
+</body>
+</html>
