@@ -2,7 +2,7 @@
 <table>
 <tr>
 <td>
-  A webapp that displays real time job postings with analytical visualizations using an automated pipeline with scheduled scrape tasks, ingestion into MongoDB, uploads into FastAPI via Render cloud API services, and auto-fetches from HTML data. 
+  A dynamic web application that showcases real-time job postings and interactive analytical visualizations. It features an automated data pipeline with scheduled scraping tasks, seamless ingestion into MongoDB, integration with FastAPI deployed via Render, and real-time data rendering through auto-fetched API endpoints via JavaScript.
 </td>
 </tr>
 </table>
