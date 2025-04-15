@@ -1,4 +1,4 @@
 fastapi
-load_dotenv
+python-dotenv
 pymongo
 uvicorn
