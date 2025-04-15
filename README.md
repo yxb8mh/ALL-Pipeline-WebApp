@@ -26,9 +26,9 @@ Here is a working live demo : https://dscareers-ethancao.pythonanywhere.com
   
 **04/22**
 - Connect to Front-end (HTML & JavaScript architecture) via Render's cloud hosted FastAPI
-- Establishment of analytical visualizations via D3 or Python
+- Create an analytical dashboard of visualizations via D3 or Python
 - Connect an AI summarizer agent to the workflow to summarize lengthy job descriptions to 2-3 sentences
-- Write a script that either uses mechanical key word extraction methods, or using natural langugae processing to extract keywords such as skillset requirements from the job database
+- Write a script that either uses mechanical key word extraction methods, or uses natural langugae processing to extract keywords such as skillset requirements from the job database
 - Testing of scheduled task and whether website updates in real time
   
 **04/30**
