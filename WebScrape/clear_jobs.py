@@ -7,7 +7,7 @@ mongo_pwd = os.getenv("MONGO_PWD")
 
 client = MongoClient(f"mongodb+srv://JuneWay:{mongo_pwd}@ethanc.qgevd.mongodb.net/")
 db = client["JobDB"]
-db["jobs_data"].delete_many({})
+db["jobs"].delete_many({})
 
 
 print(" Cleared 'jobs_data' collection in JobDB.")
