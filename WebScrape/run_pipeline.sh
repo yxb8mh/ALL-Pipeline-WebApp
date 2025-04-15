@@ -3,10 +3,9 @@ set -a
 source .env
 set +a
 
-echo "clearing existing documents in jobs_data collection..."
-mongoimport --uri "mongodb+srv://JuneWay:$MONGO_PWD@ethanc.qgevd.mongodb.net/JobDB" \
-    --eval "db.jobs_data.deleteMany({})" 
-    
+echo "Running cleanup script..."
+python3 clear_jobs.py
+
 echo "Running scraper..."
 python3 JobScraper.py
 
@@ -17,4 +16,5 @@ mongoimport --uri "mongodb+srv://JuneWay:$MONGO_PWD@ethanc.qgevd.mongodb.net/Job
     --file Data_Science_Internship_Full.csv \
     --headerline
 
-echo "Import complete"
+echo "Running location encoder script..."
+python3 latlong_US.py

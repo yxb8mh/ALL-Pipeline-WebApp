@@ -1,0 +1,18 @@
+from pymongo import MongoClient
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+mongo_pwd = os.getenv("MONGO_PWD")
+
+client = MongoClient(f"mongodb+srv://JuneWay:{mongo_pwd}@ethanc.qgevd.mongodb.net/")
+db = client["JobDB"]
+db["jobs_data"].delete_many({})
+
+
+print(" Cleared 'jobs_data' collection in JobDB.")
+
+geo_db = client["GeoDB"]
+geo_db["geo_locations"].delete_many({})
+
+print(" Cleared 'geo_locations' collection in GeoDB.")
