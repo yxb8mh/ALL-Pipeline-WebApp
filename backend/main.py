@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from pymongo import MongoClient
 from fastapi.middleware.cors import CORSMiddleware
 import os
-import load_dotenv
 from dotenv import load_dotenv
 
 load_dotenv()
